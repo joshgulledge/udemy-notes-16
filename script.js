@@ -34,6 +34,4 @@ const getCountryData = function (country) {
 };
 
 getCountryData('usa');
-getCountryData(
-  'irelandgit remote add origin https://github.com/joshgulledge/udemy-notes-16.git'
-);
+getCountryData('ireland');
