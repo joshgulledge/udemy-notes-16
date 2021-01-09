@@ -132,10 +132,18 @@ const request = fetch('https://restcountries.eu/rest/v2/name/usa');
 // console.log(request);
 
 const getCountryData = function (country) {
+  // country 1
   fetch(`https://restcountries.eu/rest/v2/name/${country}`)
-    // returns a promise
+    // ^ returns a promise
     .then(response => response.json())
     // ^ json also returns a promise
-    .then(data => renderCountry(data[0]));
+    .then(data => {
+      renderCountry(data[0]);
+      // country 2
+      const neighbor = data[0].borders[0];
+      return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`); // get the returnes promise
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'));
 };
 getCountryData('usa');
