@@ -176,7 +176,7 @@ TEST COORDINATES 2: -33.933, 18.474
 
 GOOD LUCK 😀
 
-*/
+
 
 let thePlace;
 
@@ -202,3 +202,70 @@ whereAmI(52.508, 13.381);
 // getCountryData(thePlace);
 whereAmI(19.037, 72.873);
 whereAmI(-33.933, 18.474);
+
+*/
+
+/*
+
+// -------- Making a promise --------
+
+const lotteryTicket = new Promise(function (resolve, reject) {
+  setTimeout(function () {
+    Math.random() >= 0.5
+      ? resolve('💵 💵 YOU WIN??? 💵 💵')
+      : reject(new Error('You Loose 💸 '));
+  }, 2000);
+});
+
+lotteryTicket.then(res => console.log(res)).catch(err => console.error(err));
+
+// promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+wait(3)
+  .then(() => {
+    console.log('Waited 3 seconds');
+    return wait(1);
+  })
+  .then(() => console.log('I waited another second'));
+
+  */
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   pos => resolve(pos),
+    //   err => reject(err)
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = function () {
+  getPosition()
+    .then(pos => {
+      console.log(pos.coords);
+      const { latitude: lat, longitude: lng } = pos.coords;
+      return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Sorry, not sorry. Not allowed here. ');
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      // thePlace = data.country;
+      console.log(`You are in ${data.city}, ${data.country}`);
+
+      return fetch(`https://restcountries.eu/rest/v2/name/${data.country}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data[0]))
+    .catch(err => console.error(`Sorry for party rocking ${err.message}`));
+};
+
+whereAmI();
