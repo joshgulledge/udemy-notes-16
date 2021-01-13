@@ -347,6 +347,8 @@ imageGetter('img/img-1.jpg')
 
   */
 
+/*
+
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
     navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -400,3 +402,40 @@ console.log('1: Will get location');
   }
   console.log('3: Finished getting location');
 })();
+
+*/
+
+const getJson = function (url, errorMsg = 'something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    // const [data1] = await getJson(
+    //   `https://restcountries.eu/rest/v2/name/${c1}`
+    // );
+    // const [data2] = await getJson(
+    //   `https://restcountries.eu/rest/v2/name/${c2}`
+    // );
+    // const [data3] = await getJson(
+    //   `https://restcountries.eu/rest/v2/name/${c3}`
+    // );
+    // console.log([data1.capital, data2.capital, data3.capital]);
+
+    const data = await Promise.all([
+      getJson(`https://restcountries.eu/rest/v2/name/${c1}`),
+      getJson(`https://restcountries.eu/rest/v2/name/${c2}`),
+      getJson(`https://restcountries.eu/rest/v2/name/${c3}`),
+    ]);
+
+    console.log(data.map(d => d[0].capital));
+  } catch (err) {
+    console.error(`${err.message}`);
+  }
+};
+
+get3Countries('usa', 'jamaica', 'greece');
