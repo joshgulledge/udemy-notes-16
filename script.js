@@ -354,20 +354,29 @@ const getPosition = function () {
 };
 
 const whereAmI = async function () {
-  const pos = await getPosition();
+  try {
+    const pos = await getPosition();
 
-  const { latitude: lat, longitude: lng } = pos.coords;
+    const { latitude: lat, longitude: lng } = pos.coords;
 
-  const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
-  // console.log(dataGeo);
-  const dataGeo = await resGeo.json();
+    const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
 
-  const res = await fetch(
-    `https://restcountries.eu/rest/v2/name/${dataGeo.country}`
-  );
-  const data = await res.json();
-  // console.log(data);
-  renderCountry(data[0]);
+    if (!resGeo) throw new Error('Problem getting location data');
+
+    // console.log(dataGeo);
+    const dataGeo = await resGeo.json();
+
+    const res = await fetch(
+      `https://restcountries.eu/rest/v2/name/${dataGeo.country}`
+    );
+    if (!resGeo) throw new Error('Problem getting location data');
+
+    const data = await res.json();
+    // console.log(data);
+    renderCountry(data[0]);
+  } catch (err) {
+    console.error(`${err} 💥`);
+  }
 };
 
 whereAmI();
